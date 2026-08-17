@@ -89,7 +89,7 @@
         .res-hand-text { margin-top: 2px; font-size: 0.8rem; color: #f8fafc; font-weight: 600; }
         .res-kicker-text { margin-top: 2px; font-size: 0.65rem; color: #34d399; font-family: 'Share Tech Mono', monospace; }
 
-        /* 카드 랭크 파워 순위표 바 (새로 추가) */
+        /* 카드 랭크 파워 순위표 바 */
         .rank-power-bar {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(251, 191, 36, 0.3);
@@ -124,15 +124,18 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            transition: all 0.2s;
         }
-        /* 에이스나 주요 알파벳 강조 */
-        .power-mini-badge.high {
-            background: rgba(251, 191, 36, 0.2);
+        /* 파워 바 내 카드 활성화(불빛) 효과 */
+        .power-mini-badge.active {
+            background: rgba(251, 191, 36, 0.25);
             border-color: var(--neon-gold);
             color: var(--neon-gold);
+            box-shadow: 0 0 10px var(--neon-gold-glow), inset 0 0 5px var(--neon-gold-glow);
+            transform: scale(1.1);
         }
 
-        /* 족보 랭킹 카드 패널 (상태창 스타일) */
+        /* 족보 랭킹 카드 패널 */
         .ranking-panel {
             background: var(--dark-card);
             border: 1px solid rgba(251, 191, 36, 0.4);
@@ -377,20 +380,20 @@
                 <span>⚡ 숫자·알파벳 순위</span>
                 <span style="color:#34d399;">(좌: 약함 ➔ 우: 강함)</span>
             </div>
-            <div class="power-cards-container">
-                <div class="power-mini-badge">2</div>
-                <div class="power-mini-badge">3</div>
-                <div class="power-mini-badge">4</div>
-                <div class="power-mini-badge">5</div>
-                <div class="power-mini-badge">6</div>
-                <div class="power-mini-badge">7</div>
-                <div class="power-mini-badge">8</div>
-                <div class="power-mini-badge">9</div>
-                <div class="power-mini-badge">10</div>
-                <div class="power-mini-badge high">J</div>
-                <div class="power-mini-badge high">Q</div>
-                <div class="power-mini-badge high">K</div>
-                <div class="power-mini-badge high" style="background:var(--neon-gold); color:#000;">A</div>
+            <div class="power-cards-container" id="powerCardsContainer">
+                <div class="power-mini-badge" data-rank="2">2</div>
+                <div class="power-mini-badge" data-rank="3">3</div>
+                <div class="power-mini-badge" data-rank="4">4</div>
+                <div class="power-mini-badge" data-rank="5">5</div>
+                <div class="power-mini-badge" data-rank="6">6</div>
+                <div class="power-mini-badge" data-rank="7">7</div>
+                <div class="power-mini-badge" data-rank="8">8</div>
+                <div class="power-mini-badge" data-rank="9">9</div>
+                <div class="power-mini-badge" data-rank="T">10</div>
+                <div class="power-mini-badge" data-rank="J">J</div>
+                <div class="power-mini-badge" data-rank="Q">Q</div>
+                <div class="power-mini-badge" data-rank="K">K</div>
+                <div class="power-mini-badge" data-rank="A">A</div>
             </div>
         </div>
 
@@ -403,7 +406,7 @@
             <div class="ranking-content" id="rankingContent">
                 <!-- 1. 로열 플러시 -->
                 <div class="rank-card-item" data-hand="Royal Flush">
-                    <div class="rank-header"><span>1. 로열 플러시</span><span>최고의 족보</span></div>
+                    <div class="rank-header"><span>1. 로열 플러시</span><span>같은 모양</span></div>
                     <div class="mini-cards-row">
                         <div class="mini-card hearts"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                         <div class="mini-card hearts"><span class="mc-top">J</span><span class="mc-mid">♥</span><span class="mc-bot">J</span></div>
@@ -414,18 +417,18 @@
                 </div>
                 <!-- 6. 스트레이트 -->
                 <div class="rank-card-item" data-hand="Straight">
-                    <div class="rank-header"><span>6. 스트레이트</span><span>연속 5장</span></div>
+                    <div class="rank-header"><span>6. 스트레이트</span><span>연속되는숫자</span></div>
                     <div class="mini-cards-row">
                         <div class="mini-card hearts"><span class="mc-top">6</span><span class="mc-mid">♥</span><span class="mc-bot">6</span></div>
-                        <div class="mini-card hearts"><span class="mc-top">7</span><span class="mc-mid">♥</span><span class="mc-bot">7</span></div>
-                        <div class="mini-card hearts"><span class="mc-top">8</span><span class="mc-mid">♥</span><span class="mc-bot">8</span></div>
+                        <div class="mini-card clubs"><span class="mc-top">7</span><span class="mc-mid">♣</span><span class="mc-bot">7</span></div>
+                        <div class="mini-card diams"><span class="mc-top">8</span><span class="mc-mid">♦</span><span class="mc-bot">8</span></div>
                         <div class="mini-card spades"><span class="mc-top">9</span><span class="mc-mid">♠</span><span class="mc-bot">9</span></div>
                         <div class="mini-card hearts"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
                 <!-- 2. 스트레이트 플러시 -->
                 <div class="rank-card-item" data-hand="Straight Flush">
-                    <div class="rank-header"><span>2. 스트레이트 플러시</span><span>동일문양 연속</span></div>
+                    <div class="rank-header"><span>2. 스트레이트플러시</span><span>동일문양 연속</span></div>
                     <div class="mini-cards-row">
                         <div class="mini-card hearts"><span class="mc-top">6</span><span class="mc-mid">♥</span><span class="mc-bot">6</span></div>
                         <div class="mini-card hearts"><span class="mc-top">7</span><span class="mc-mid">♥</span><span class="mc-bot">7</span></div>
@@ -452,7 +455,7 @@
                         <div class="mini-card hearts"><span class="mc-top">A</span><span class="mc-mid">♥</span><span class="mc-bot">A</span></div>
                         <div class="mini-card spades"><span class="mc-top">A</span><span class="mc-mid">♠</span><span class="mc-bot">A</span></div>
                         <div class="mini-card diams"><span class="mc-top">A</span><span class="mc-mid">♦</span><span class="mc-bot">A</span></div>
-                        <div class="mini-card hearts"><span class="mc-top">A</span><span class="mc-mid">♥</span><span class="mc-bot">A</span></div>
+                        <div class="mini-card clubs"><span class="mc-top">A</span><span class="mc-mid">♣</span><span class="mc-bot">A</span></div>
                         <div class="mini-card dimmed"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
@@ -461,7 +464,7 @@
                     <div class="rank-header"><span>8. 투페어</span><span>쌍 2개 조합</span></div>
                     <div class="mini-cards-row">
                         <div class="mini-card hearts"><span class="mc-top">K</span><span class="mc-mid">♥</span><span class="mc-bot">K</span></div>
-                        <div class="mini-card hearts"><span class="mc-top">K</span><span class="mc-mid">♥</span><span class="mc-bot">K</span></div>
+                        <div class="mini-card clubs"><span class="mc-top">K</span><span class="mc-mid">♣</span><span class="mc-bot">K</span></div>
                         <div class="mini-card hearts"><span class="mc-top">A</span><span class="mc-mid">♥</span><span class="mc-bot">A</span></div>
                         <div class="mini-card spades"><span class="mc-top">A</span><span class="mc-mid">♠</span><span class="mc-bot">A</span></div>
                         <div class="mini-card dimmed"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
@@ -491,7 +494,7 @@
                 </div>
                 <!-- 5. 플러시 -->
                 <div class="rank-card-item" data-hand="Flush">
-                    <div class="rank-header"><span>5. 플러시</span><span>같은문양 5장</span></div>
+                    <div class="rank-header"><span>5. 플러시</span><span>같은모양5장</span></div>
                     <div class="mini-cards-row">
                         <div class="mini-card spades"><span class="mc-top">5</span><span class="mc-mid">♠</span><span class="mc-bot">5</span></div>
                         <div class="mini-card spades"><span class="mc-top">7</span><span class="mc-mid">♠</span><span class="mc-bot">7</span></div>
@@ -630,6 +633,21 @@
         });
     }
 
+    function highlightPowerBar(winningValues) {
+        document.querySelectorAll('.power-mini-badge').forEach(badge => {
+            badge.classList.remove('active');
+        });
+
+        if (!winningValues || winningValues.length === 0) return;
+
+        document.querySelectorAll('.power-mini-badge').forEach(badge => {
+            let r = badge.getAttribute('data-rank');
+            if (winningValues.includes(r)) {
+                badge.classList.add('active');
+            }
+        });
+    }
+
     function resetAll() {
         board = [null, null, null, null, null];
         hole = [null, null];
@@ -648,6 +666,7 @@
         document.getElementById('res-winrate').innerText = '대기 중';
         document.getElementById('res-kicker').innerText = '동일 족보 시 하이카드(알파벳/숫자) 순위 판정';
         document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
     }
 
     function calculatePoker() {
@@ -658,92 +677,107 @@
         const resetSlotStyles = (containerId) => {
             const slots = document.getElementById(containerId).children;
             for(let i=0; i<slots.length; i++) {
-                let cObj = (containerId === 'board-cards') ? board[i] : hole[i];
-                if(cObj) {
-                    let disp = cObj.rank === 'T' ? '10' : cObj.rank;
-                    slots[i].className = `card-slot filled ${cObj.suit}`;
-                    slots[i].innerHTML = `<div class="card-top-left">${disp}${suits[cObj.suit]}</div><div class="card-center-symbol">${suits[cObj.suit]}</div><div class="card-bottom-right">${disp}${suits[cObj.suit]}</div>`;
-                } else {
-                    slots[i].className = 'card-slot empty';
-                    slots[i].innerHTML = '+';
-                }
+                slots[i].classList.remove('winning-card');
             }
         };
         resetSlotStyles('board-cards');
         resetSlotStyles('hole-cards');
 
-        if (activeHole.length === 0) {
-            document.getElementById('res-hand').innerText = '내 패를 최소 1장 이상 선택해주세요';
-            document.getElementById('res-winrate').innerText = '대기 중';
-            document.getElementById('res-kicker').innerText = '동일 족보 시 하이카드(알파벳/숫자) 순위 판정';
-            document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active'));
-            return;
-        }
-
-        if (totalCards.length >= 5) {
-            try {
-                let cardStrings = totalCards.map(c => c.rank + suitLetters[c.suit]);
-                let solved = Hand.solve(cardStrings);
-                
-                const handNames = {
-                    'Royal Flush': '로열 플러시', 
-                    'Straight Flush': '스트레이트 플러시',
-                    'Four of a Kind': '포카드', 
-                    'Full House': '풀하우스',
-                    'Flush': '플러시', 
-                    'Straight': '스트레이트',
-                    'Three of a Kind': '트리플', 
-                    'Two Pair': '투페어',
-                    'Pair': '원페어', 
-                    'High Card': '하이카드'
-                };
-
-                let koreanName = handNames[solved.name] || solved.name;
-                document.getElementById('res-hand').innerText = koreanName;
-                document.getElementById('res-winrate').innerText = "족보 완성!";
-                
-                let cardValsDesc = solved.cards.map(c => c.value.replace('T', '10')).join(', ');
-                document.getElementById('res-kicker').innerText = `✨ 핵심 카드 순위: [ ${cardValsDesc} ] 승리!`;
-
-                highlightRanking(solved.name);
-
-                const highlightDOMCards = () => {
-                    const checkAndGlow = (containerId, sourceArray) => {
-                        const slots = document.getElementById(containerId).children;
-                        for(let i=0; i<sourceArray.length; i++) {
-                            let card = sourceArray[i];
-                            if(!card) continue;
-                            let isWinning = solved.cards.some(sc => sc.value === card.rank && suitLetters[card.suit] === sc.suit);
-                            if(isWinning) {
-                                slots[i].classList.add('winning-card');
-                            }
-                        }
-                    };
-                    checkAndGlow('board-cards', board);
-                    checkAndGlow('hole-cards', hole);
-                };
-
-                highlightDOMCards();
-                return;
-            } catch (e) {
-                console.error(e);
+        for(let i=0; i<5; i++) {
+            let slot = document.getElementById('board-cards').children[i];
+            let c = board[i];
+            if(c) {
+                slot.className = `card-slot filled ${c.suit}`;
+                slot.innerHTML = `<span class="card-top-left">${c.rank === 'T' ? '10' : c.rank}</span><span class="card-center-symbol">${suits[c.suit]}</span><span class="card-bottom-right">${c.rank === 'T' ? '10' : c.rank}</span>`;
+            } else {
+                slot.className = 'card-slot empty';
+                slot.innerHTML = '+';
             }
         }
 
-        let ranksOnly = totalCards.map(c => c.rank);
-        let counts = {};
-        ranksOnly.forEach(r => counts[r] = (counts[r] || 0) + 1);
-        let maxCount = Math.max(...Object.values(counts));
-        let currentHandName = `조합 진행 중 (${totalCards.length}/5장)`;
-        
-        if (maxCount === 4) { currentHandName = "포카드 조합 중"; highlightRanking('Four of a Kind'); }
-        else if (maxCount === 3) { currentHandName = "트리플 조합 중"; highlightRanking('Three of a Kind'); }
-        else if (maxCount === 2) { currentHandName = "원페어 조합 중"; highlightRanking('Pair'); }
-        else { document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active')); }
+        for(let i=0; i<2; i++) {
+            let slot = document.getElementById('hole-cards').children[i];
+            let c = hole[i];
+            if(c) {
+                slot.className = `card-slot filled ${c.suit}`;
+                slot.innerHTML = `<span class="card-top-left">${c.rank === 'T' ? '10' : c.rank}</span><span class="card-center-symbol">${suits[c.suit]}</span><span class="card-bottom-right">${c.rank === 'T' ? '10' : c.rank}</span>`;
+            } else {
+                slot.className = 'card-slot empty';
+                slot.innerHTML = '+';
+            }
+        }
 
-        document.getElementById('res-hand').innerText = currentHandName;
-        document.getElementById('res-winrate').innerText = `${totalCards.length}/7 장`;
-        document.getElementById('res-kicker').innerText = `동일 족보 시 하이카드(알파벳/숫자) 순위 판정`;
+        if (totalCards.length < 5) {
+            document.getElementById('res-hand').innerText = `총 5장 이상의 카드가 필요합니다 (현재 ${totalCards.length}장)`;
+            document.getElementById('res-winrate').innerText = '카드 부족';
+            document.getElementById('res-kicker').innerText = '공유패와 내 패를 더 선택하세요.';
+            document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
+            return;
+        }
+
+        try {
+            var Hand = Pokersolver.Hand;
+            var convertedCards = totalCards.map(c => c.rank + suitLetters[c.suit]);
+            var solvedHand = Hand.solve(convertedCards);
+
+            const handNameMap = {
+                'Royal Flush': '로열 플러시',
+                'Straight Flush': '스트레이트 플러시',
+                'Four of a Kind': '포카드',
+                'Full House': '풀하우스',
+                'Flush': '플러시',
+                'Straight': '스트레이트',
+                'Three of a Kind': '트리플',
+                'Two Pair': '투페어',
+                'Pair': '원페어',
+                'High Card': '하이카드'
+            };
+
+            const englishKey = solvedHand.name;
+            const koreanName = handNameMap[englishKey] || englishKey;
+
+            document.getElementById('res-hand').innerText = `현재 족보: ${koreanName} (${solvedHand.descr})`;
+            document.getElementById('res-winrate').innerText = `✦ 분석 완료 ✦`;
+            document.getElementById('res-kicker').innerText = `사용된 카드: ${solvedHand.cards.map(c => c.value + suits[Object.keys(suitLetters).find(k => suitLetters[k] === c.suit)]).join(', ')}`;
+
+            highlightRanking(englishKey);
+
+            if (solvedHand.cards && solvedHand.cards.length > 0) {
+                let winningValues = solvedHand.cards.map(c => c.value);
+                let winningSuits = solvedHand.cards.map(c => c.suit);
+
+                highlightPowerBar(winningValues);
+
+                let cloneValues = [...winningValues];
+                let cloneSuits = [...winningSuits];
+
+                const checkAndMark = (containerId, sourceArray) => {
+                    const slots = document.getElementById(containerId).children;
+                    for (let i = 0; i < sourceArray.length; i++) {
+                        let c = sourceArray[i];
+                        if (c) {
+                            let cardVal = c.rank;
+                            let cardSuitKey = suitLetters[c.suit];
+                            let matchIdx = cloneValues.findIndex((val, idx) => val === cardVal && cloneSuits[idx] === cardSuitKey);
+                            if (matchIdx !== -1) {
+                                slots[i].classList.add('winning-card');
+                                cloneValues.splice(matchIdx, 1);
+                                cloneSuits.splice(matchIdx, 1);
+                            }
+                        }
+                    }
+                };
+
+                checkAndMark('board-cards', board);
+                checkAndMark('hole-cards', hole);
+            }
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('res-hand').innerText = '족보 분석 중 오류가 발생했습니다.';
+            document.getElementById('res-winrate').innerText = '오류';
+        }
     }
 </script>
 </body>
