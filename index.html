@@ -256,7 +256,6 @@
         .card-slot.filled.hearts, .card-slot.filled.diams { color: #dc2626; }
         .card-slot.filled.spades, .card-slot.filled.clubs { color: #0f172a; }
 
-        /* 족보 완성 카드 네온 불빛 강조 효과 */
         .card-slot.filled.winning-card {
             border: 3px solid var(--neon-gold) !important;
             box-shadow: 0 0 16px var(--neon-gold), inset 0 0 8px var(--neon-gold-glow) !important;
@@ -638,7 +637,30 @@
         document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
     }
 
-    // 스트레이트 플러시 감지 함수
+    function findBestStraight(cardsList) {
+        let uniqueRanks = {};
+        cardsList.forEach(c => uniqueRanks[rankWeight[c.rank]] = c);
+        let sortedWeights = Object.keys(uniqueRanks).map(Number).sort((a,b) => b - a);
+        
+        if (uniqueRanks[14] && uniqueRanks[5] && uniqueRanks[4] && uniqueRanks[3] && uniqueRanks[2]) {
+            return [uniqueRanks[5], uniqueRanks[4], uniqueRanks[3], uniqueRanks[2], uniqueRanks[14]];
+        }
+
+        for (let i = 0; i <= sortedWeights.length - 5; i++) {
+            let consecutive = true;
+            let sub = [uniqueRanks[sortedWeights[i]]];
+            for (let j = 0; j < 4; j++) {
+                if (sortedWeights[i+j] - sortedWeights[i+j+1] !== 1) {
+                    consecutive = false;
+                    break;
+                }
+                sub.push(uniqueRanks[sortedWeights[i+j+1]]);
+            }
+            if (consecutive) return sub;
+        }
+        return null;
+    }
+
     function findBestStraightFlush(totalCards) {
         let suitsMap = {};
         totalCards.forEach(c => {
@@ -652,229 +674,119 @@
                 let straightFromSuit = findBestStraight(sCards);
                 if (straightFromSuit) {
                     let isRoyal = straightFromSuit.some(c => c.rank === 'A') && straightFromSuit.some(c => c.rank === 'T');
-                    return {
-                        name: isRoyal ? 'Royal Flush' : 'Straight Flush',
-                        descr: isRoyal ? '로열 플러시 완성' : '스트레이트 플러시 완성',
-                        cards: straightFromSuit.map(c => ({ value: c.rank, suit: suitLetters[c.suit] }))
-                    };
+                    return { isRoyal: isRoyal, cards: straightFromSuit };
                 }
             }
         }
         return null;
     }
 
-    // 일반 스트레이트 감지 함수
-    function findBestStraight(totalCards) {
-        let uniqueWeights = [...new Set(totalCards.map(c => rankWeight[c.rank]))].sort((a, b) => b - a);
-        if (uniqueWeights.includes(14)) {
-            uniqueWeights.push(1);
-        }
-
-        let bestStraightCards = null;
-        for (let i = 0; i <= uniqueWeights.length - 5; i++) {
-            let consecutive = true;
-            let subWeights = [];
-            for (let j = 0; j < 5; j++) {
-                subWeights.push(uniqueWeights[i + j]);
-                if (j > 0 && uniqueWeights[i + j - 1] - uniqueWeights[i + j] !== 1) {
-                    consecutive = false;
-                    break;
-                }
-            }
-            if (consecutive) {
-                let matched = [];
-                for (let w of subWeights) {
-                    let targetW = (w === 1 ? 14 : w);
-                    let foundCard = totalCards.find(c => rankWeight[c.rank] === targetW && !matched.includes(c));
-                    if (foundCard) matched.push(foundCard);
-                }
-                if (matched.length === 5) {
-                    bestStraightCards = matched;
-                    break;
-                }
-            }
-        }
-        return bestStraightCards;
-    }
-
-    function evaluatePartialHand(totalCards) {
-        const ranksCount = {};
-        const suitsCount = {};
-        totalCards.forEach(c => {
-            ranksCount[c.rank] = (ranksCount[c.rank] || 0) + 1;
-            suitsCount[c.suit] = (suitsCount[c.suit] || 0) + 1;
-        });
-
-        const counts = Object.values(ranksCount).sort((a, b) => b - a);
-        const maxSuitCount = Math.max(...Object.values(suitsCount), 0);
-
-        if (maxSuitCount >= 5) return { name: 'Flush', descr: '플러시 가능성' };
-        if (counts[0] === 4) return { name: 'Four of a Kind', descr: '포카드 구성 중' };
-        if (counts[0] === 3 && counts[1] >= 2) return { name: 'Full House', descr: '풀하우스 구성 중' };
-        if (counts[0] === 3) return { name: 'Three of a Kind', descr: '트리플 구성 중' };
-        if (counts[0] === 2 && counts[1] === 2) return { name: 'Two Pair', descr: '투페어 구성 중' };
-        if (counts[0] === 2) return { name: 'Pair', descr: '원페어 구성 중' };
-
-        return { name: 'High Card', descr: '하이카드 조합 진행 중' };
-    }
-
     function calculatePoker() {
-        const activeHole = hole.filter(c => c !== null);
-        const activeBoard = board.filter(c => c !== null);
-        const totalCards = [...activeHole, ...activeBoard];
+        const filledHole = hole.filter(c => c !== null);
+        const filledBoard = board.filter(c => c !== null);
+        const totalCards = [...filledHole, ...filledBoard];
 
-        const resetSlotStyles = (containerId) => {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            for(let slot of container.children) {
-                slot.classList.remove('winning-card');
-            }
-        };
-        resetSlotStyles('board-cards');
-        resetSlotStyles('hole-cards');
-
-        for(let i=0; i<5; i++) {
-            let slot = document.getElementById('board-cards').children[i];
-            let c = board[i];
-            if(c) {
-                slot.className = `card-slot filled ${c.suit}`;
-                slot.innerHTML = `<span class="card-top-left">${c.rank === 'T' ? '10' : c.rank}</span><span class="card-center-symbol">${suits[c.suit]}</span><span class="card-bottom-right">${c.rank === 'T' ? '10' : c.rank}</span>`;
-            } else {
-                slot.className = 'card-slot empty';
-                slot.innerHTML = '+';
-            }
-        }
-
-        for(let i=0; i<2; i++) {
-            let slot = document.getElementById('hole-cards').children[i];
-            let c = hole[i];
-            if(c) {
-                slot.className = `card-slot filled ${c.suit}`;
-                slot.innerHTML = `<span class="card-top-left">${c.rank === 'T' ? '10' : c.rank}</span><span class="card-center-symbol">${suits[c.suit]}</span><span class="card-bottom-right">${c.rank === 'T' ? '10' : c.rank}</span>`;
-            } else {
-                slot.className = 'card-slot empty';
-                slot.innerHTML = '+';
-            }
-        }
-
-        if (totalCards.length === 0) {
-            document.getElementById('res-hand').innerText = '내 패와 공유패를 선택해주세요';
-            document.getElementById('res-winrate').innerText = '대기 중';
-            document.getElementById('res-kicker').innerText = '완성된 족보 카드 및 최고 순위 표시';
+        if (filledHole.length < 2 || filledBoard.length < 3) {
+            renderSlotsWithHighlight('board-cards', board, null);
+            renderSlotsWithHighlight('hole-cards', hole, null);
+            document.getElementById('res-winrate').innerText = '입력 대기중';
+            document.getElementById('res-hand').innerText = `내 패(${filledHole.length}/2), 공유패(${filledBoard.length}/5) 선택 완료 필요`;
+            document.getElementById('res-kicker').innerText = '플랍(공유패 3장)과 내 패 2장을 모두 채워주세요.';
             document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
             return;
         }
 
-        try {
-            var solvedHand;
-            var convertedCards = totalCards.map(c => c.rank + suitLetters[c.suit]);
-            let uniqueCards = new Set(convertedCards);
-            if (uniqueCards.size !== convertedCards.length) {
-                document.getElementById('res-hand').innerText = '중복된 카드가 존재합니다!';
-                document.getElementById('res-winrate').innerText = '입력 오류';
-                document.getElementById('res-kicker').innerText = '서로 다른 카드를 선택해주세요.';
-                return;
-            }
+        const solverCards = totalCards.map(c => c.rank + suitLetters[c.suit]);
+        const solved = Hand.solve(solverCards);
 
-            // 1순위: 스트레이트 플러시(또는 로열 플러시) 수동 체크
-            let straightFlushResult = totalCards.length >= 5 ? findBestStraightFlush(totalCards) : null;
-            // 2순위: 일반 스트레이트 수동 체크
-            let straightCards = totalCards.length >= 5 ? findBestStraight(totalCards) : null;
+        let handName = solved.name;
+        let handKey = '';
+        let koreanHandName = '';
 
-            if (straightFlushResult) {
-                solvedHand = straightFlushResult;
-            } else if (totalCards.length >= 5) {
-                let HandLib = (typeof Hand !== 'undefined') ? Hand : (typeof Pokersolver !== 'undefined' ? Pokersolver.Hand : null);
-                if (HandLib) {
-                    solvedHand = HandLib.solve(convertedCards);
-                    if (straightCards && solvedHand.name !== 'Straight Flush' && solvedHand.name !== 'Royal Flush' && solvedHand.name !== 'Flush') {
-                        solvedHand.name = 'Straight';
-                        solvedHand.descr = '스트레이트 완성';
-                        solvedHand.cards = straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] }));
-                    }
-                } else {
-                    solvedHand = evaluatePartialHand(totalCards);
-                    if (straightCards) {
-                        solvedHand = { name: 'Straight', descr: '스트레이트 완성', cards: straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] })) };
-                    }
-                }
+        if (handName === 'Straight Flush') {
+            let sf = findBestStraightFlush(totalCards);
+            if (sf && sf.isRoyal) {
+                koreanHandName = '로열 플러시';
+                handKey = 'Royal Flush';
             } else {
-                solvedHand = evaluatePartialHand(totalCards);
-                if (straightCards) {
-                    solvedHand = { name: 'Straight', descr: '스트레이트 완성', cards: straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] })) };
-                }
+                koreanHandName = '스트레이트 플러시';
+                handKey = 'Straight Flush';
             }
+        } else if (handName === 'Four of a Kind') {
+            koreanHandName = '포카드';
+            handKey = 'Four of a Kind';
+        } else if (handName === 'Full House') {
+            koreanHandName = '풀하우스';
+            handKey = 'Full House';
+        } else if (handName === 'Flush') {
+            koreanHandName = '플러시';
+            handKey = 'Flush';
+        } else if (handName === 'Straight') {
+            koreanHandName = '스트레이트';
+            handKey = 'Straight';
+        } else if (handName === 'Three of a Kind') {
+            koreanHandName = '트리플';
+            handKey = 'Three of a Kind';
+        } else if (handName === 'Two Pair') {
+            koreanHandName = '투페어';
+            handKey = 'Two Pair';
+        } else if (handName === 'Pair') {
+            koreanHandName = '원페어';
+            handKey = 'Pair';
+        } else {
+            koreanHandName = '하이카드';
+            handKey = 'High Card';
+        }
 
-            const handNameMap = {
-                'Royal Flush': '로열 플러시',
-                'Straight Flush': '스트레이트 플러시',
-                'Four of a Kind': '포카드',
-                'Full House': '풀하우스',
-                'Flush': '플러시',
-                'Straight': '스트레이트',
-                'Three of a Kind': '트리플',
-                'Two Pair': '투페어',
-                'Pair': '원페어',
-                'High Card': '하이카드'
-            };
+        document.getElementById('res-winrate').innerText = `최종 족보: ${koreanHandName}`;
+        document.getElementById('res-hand').innerText = `카드 조합 완료 (총 ${totalCards.length}장)`;
+        document.getElementById('res-kicker').innerText = `설명: ${solved.descr}`;
 
-            const englishKey = solvedHand.name;
-            const koreanName = handNameMap[englishKey] || englishKey;
+        highlightRanking(handKey);
 
-            document.getElementById('res-hand').innerText = `현재 족보: ${koreanName} ${solvedHand.descr ? '('+solvedHand.descr+')' : ''}`;
-            document.getElementById('res-winrate').innerText = `✦ 실시간 분석 ✦`;
+        // Find winning card matching logic
+        const isWinningCard = (card) => {
+            if (!card || !solved.cards) return false;
+            let targetRankVal = rankWeight[card.rank];
+            let targetSuitVal = suitLetters[card.suit];
+            return solved.cards.some(sc => sc.value === targetRankVal && sc.suit === targetSuitVal);
+        };
 
-            let valuesToCompare = [];
-            let winningCardsDesc = [];
+        renderSlotsWithHighlight('board-cards', board, isWinningCard);
+        renderSlotsWithHighlight('hole-cards', hole, isWinningCard);
 
-            if (solvedHand.cards && solvedHand.cards.length > 0) {
-                winningCardsDesc = solvedHand.cards.map(c => c.value + suits[Object.keys(suitLetters).find(k => suitLetters[k] === c.suit)]);
-                valuesToCompare = solvedHand.cards.map(c => c.value);
-                document.getElementById('res-kicker').innerText = `💡 족보 완성 카드: ${winningCardsDesc.join(', ')}`;
+        // Highlight power bar based on the highest rank among the 5 active winning cards
+        if (solved.cards && solved.cards.length > 0) {
+            let winningRanks = [];
+            let rankMapBack = { 14: 'A', 13: 'K', 12: 'Q', 11: 'J', 10: 'T', 9: '9', 8: '8', 7: '7', 6: '6', 5: '5', 4: '4', 3: '3', 2: '2' };
+            solved.cards.forEach(sc => {
+                winningRanks.push(rankMapBack[sc.value]);
+            });
+            winningRanks.sort((a, b) => rankWeight[b] - rankWeight[a]);
+            highlightPowerBar(winningRanks[0]);
+        }
+    }
 
-                let winningSuits = solvedHand.cards.map(c => c.suit);
-                let cloneValues = [...valuesToCompare];
-                let cloneSuits = [...winningSuits];
-
-                const checkAndMark = (containerId, sourceArray) => {
-                    const container = document.getElementById(containerId);
-                    if (!container) return;
-                    const slots = container.children;
-                    for (let i = 0; i < sourceArray.length; i++) {
-                        let c = sourceArray[i];
-                        if (c) {
-                            let cardVal = c.rank;
-                            let cardSuitKey = suitLetters[c.suit];
-                            let matchIdx = cloneValues.findIndex((val, idx) => val === cardVal && cloneSuits[idx] === cardSuitKey);
-                            if (matchIdx !== -1) {
-                                slots[i].classList.add('winning-card');
-                                cloneValues.splice(matchIdx, 1);
-                                cloneSuits.splice(matchIdx, 1);
-                            }
-                        }
-                    }
-                };
-
-                checkAndMark('board-cards', board);
-                checkAndMark('hole-cards', hole);
-
+    function renderSlotsWithHighlight(containerId, items, checkWinningFn) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const slots = container.children;
+        for (let i = 0; i < slots.length; i++) {
+            let slot = slots[i];
+            let card = items[i];
+            if (card) {
+                let winningClass = (checkWinningFn && checkWinningFn(card)) ? ' winning-card' : '';
+                slot.className = `card-slot filled ${card.suit}${winningClass}`;
+                slot.innerHTML = `
+                    <div class="card-top-left">${card.rank === 'T' ? '10' : card.rank}<br>${suits[card.suit]}</div>
+                    <div class="card-center-symbol">${suits[card.suit]}</div>
+                    <div class="card-bottom-right">${card.rank === 'T' ? '10' : card.rank}<br>${suits[card.suit]}</div>
+                `;
             } else {
-                valuesToCompare = totalCards.map(c => c.rank);
-                document.getElementById('res-kicker').innerText = `💡 입력 카드 수: ${totalCards.length}장 (5장 이상 시 정밀 분석)`;
+                slot.className = 'card-slot empty';
+                slot.innerHTML = '+';
             }
-
-            let highestRank = valuesToCompare.reduce((max, curr) => {
-                return (rankWeight[curr] > rankWeight[max]) ? curr : max;
-            }, valuesToCompare[0]);
-
-            highlightRanking(englishKey);
-            highlightPowerBar(highestRank);
-
-        } catch (error) {
-            console.error(error);
-            document.getElementById('res-hand').innerText = '족보 분석 중 오류가 발생했습니다.';
-            document.getElementById('res-winrate').innerText = '오류';
         }
     }
 </script>
