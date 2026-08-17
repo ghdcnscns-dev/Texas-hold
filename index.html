@@ -539,6 +539,7 @@
     </div>
 </div>
 
+<!-- 안전한 CDN 로드 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pokersolver/2.1.4/pokersolver.min.js"></script>
 <script>
     let board = [null, null, null, null, null];
@@ -709,20 +710,27 @@
         }
 
         try {
-            var Hand = Pokersolver.Hand;
             var solvedHand;
             let winningValues = [];
 
+            // 중복 카드 검사
+            var convertedCards = totalCards.map(c => c.rank + suitLetters[c.suit]);
+            let uniqueCards = new Set(convertedCards);
+            if (uniqueCards.size !== convertedCards.length) {
+                document.getElementById('res-hand').innerText = '중복된 카드가 존재합니다!';
+                document.getElementById('res-winrate').innerText = '입력 오류';
+                document.getElementById('res-kicker').innerText = '서로 다른 카드를 선택해주세요.';
+                return;
+            }
+
             if (totalCards.length >= 5) {
-                var convertedCards = totalCards.map(c => c.rank + suitLetters[c.suit]);
-                let uniqueCards = new Set(convertedCards);
-                if (uniqueCards.size !== convertedCards.length) {
-                    document.getElementById('res-hand').innerText = '중복된 카드가 존재합니다!';
-                    document.getElementById('res-winrate').innerText = '입력 오류';
-                    document.getElementById('res-kicker').innerText = '서로 다른 카드를 선택해주세요.';
-                    return;
+                // 안전하게 Hand 객체 접근
+                let HandLib = (typeof Hand !== 'undefined') ? Hand : (typeof Pokersolver !== 'undefined' ? Pokersolver.Hand : null);
+                if (HandLib) {
+                    solvedHand = HandLib.solve(convertedCards);
+                } else {
+                    solvedHand = evaluatePartialHand(totalCards);
                 }
-                solvedHand = Hand.solve(convertedCards);
             } else {
                 solvedHand = evaluatePartialHand(totalCards);
             }
