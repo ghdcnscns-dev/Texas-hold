@@ -638,10 +638,34 @@
         document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
     }
 
-    // 스트레이트 감지 수동 보완 함수
+    // 스트레이트 플러시 감지 함수
+    function findBestStraightFlush(totalCards) {
+        let suitsMap = {};
+        totalCards.forEach(c => {
+            if (!suitsMap[c.suit]) suitsMap[c.suit] = [];
+            suitsMap[c.suit].push(c);
+        });
+
+        for (let s in suitsMap) {
+            let sCards = suitsMap[s];
+            if (sCards.length >= 5) {
+                let straightFromSuit = findBestStraight(sCards);
+                if (straightFromSuit) {
+                    let isRoyal = straightFromSuit.some(c => c.rank === 'A') && straightFromSuit.some(c => c.rank === 'T');
+                    return {
+                        name: isRoyal ? 'Royal Flush' : 'Straight Flush',
+                        descr: isRoyal ? '로열 플러시 완성' : '스트레이트 플러시 완성',
+                        cards: straightFromSuit.map(c => ({ value: c.rank, suit: suitLetters[c.suit] }))
+                    };
+                }
+            }
+        }
+        return null;
+    }
+
+    // 일반 스트레이트 감지 함수
     function findBestStraight(totalCards) {
         let uniqueWeights = [...new Set(totalCards.map(c => rankWeight[c.rank]))].sort((a, b) => b - a);
-        // 에이스(14)가 있을 경우 1(A-2-3-4-5용)도 추가 고려
         if (uniqueWeights.includes(14)) {
             uniqueWeights.push(1);
         }
@@ -658,7 +682,6 @@
                 }
             }
             if (consecutive) {
-                // 실제 일치하는 카드 5장 추출
                 let matched = [];
                 for (let w of subWeights) {
                     let targetW = (w === 1 ? 14 : w);
@@ -754,21 +777,21 @@
                 return;
             }
 
-            // 스트레이트(연속숫자) 수동 판정 먼저 체크
+            // 1순위: 스트레이트 플러시(또는 로열 플러시) 수동 체크
+            let straightFlushResult = totalCards.length >= 5 ? findBestStraightFlush(totalCards) : null;
+            // 2순위: 일반 스트레이트 수동 체크
             let straightCards = totalCards.length >= 5 ? findBestStraight(totalCards) : null;
 
-            if (totalCards.length >= 5) {
+            if (straightFlushResult) {
+                solvedHand = straightFlushResult;
+            } else if (totalCards.length >= 5) {
                 let HandLib = (typeof Hand !== 'undefined') ? Hand : (typeof Pokersolver !== 'undefined' ? Pokersolver.Hand : null);
                 if (HandLib) {
                     solvedHand = HandLib.solve(convertedCards);
-                    // 라이브러리가 스트레이트를 놓쳤으나 우리 수동 로직에는 잡힌 경우 강제 보정
-                    if (straightCards && solvedHand.name !== 'Straight Flush' && solvedHand.name !== 'Royal Flush' && solvedHand.name !== 'Straight') {
-                        // 만약 플러시가 아니라면 스트레이트로 인정
-                        if (solvedHand.name !== 'Flush') {
-                            solvedHand.name = 'Straight';
-                            solvedHand.descr = '스트레이트 완성';
-                            solvedHand.cards = straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] }));
-                        }
+                    if (straightCards && solvedHand.name !== 'Straight Flush' && solvedHand.name !== 'Royal Flush' && solvedHand.name !== 'Flush') {
+                        solvedHand.name = 'Straight';
+                        solvedHand.descr = '스트레이트 완성';
+                        solvedHand.cards = straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] }));
                     }
                 } else {
                     solvedHand = evaluatePartialHand(totalCards);
