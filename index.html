@@ -3,126 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Texas Hold'em Pro Expert</title>
+    <title>VIP Texas Hold'em Casino</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Share+Tech+Mono&display=swap');
 
         :root {
-            --table-green: #064e3b;
-            --gold: #d4af37;
-            --dark-glass: rgba(15, 23, 42, 0.92);
+            --casino-green: radial-gradient(circle at center, #065f46 0%, #022c22 100%);
+            --neon-gold: #fbbf24;
+            --neon-gold-glow: rgba(251, 191, 36, 0.6);
+            --dark-card: #090d16;
+            --chip-red: #ef4444;
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at center, #1e3a8a, #0f172a);
+            background: #020617;
             color: white;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             display: flex;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
         }
 
         .app-container {
             width: 100%;
-            max-width: 450px;
-            background: var(--table-green);
-            border: 4px solid var(--gold);
-            border-radius: 25px;
-            padding: 20px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.7), inset 0 0 80px rgba(0,0,0,0.5);
+            max-width: 440px;
+            background: var(--casino-green);
+            border: 5px solid var(--neon-gold);
+            border-radius: 30px;
+            padding: 18px;
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.3), inset 0 0 60px rgba(0,0,0,0.8);
             position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            box-sizing: border-box;
         }
 
-        /* 전광판 디자인 */
-        .dashboard {
-            background: var(--dark-glass);
-            padding: 16px;
-            border-radius: 16px;
+        /* 상단 카지노 네온 타이틀 */
+        .casino-header {
             text-align: center;
-            border: 1px solid var(--gold);
-            margin-bottom: 15px;
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.4);
+            margin-bottom: 12px;
         }
-        .dashboard-title { font-size: 0.7rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
-        .win-rate { font-size: 1.9rem; font-weight: 700; color: var(--gold); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .res-hand-text { margin-top: 6px; font-size: 0.95rem; color: #f8fafc; font-weight: 600; }
+        .casino-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: var(--neon-gold);
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-gold-glow);
+            margin: 0;
+        }
 
-        /* [신규] 아웃츠 및 기대 족보 예측 패널 */
-        .prediction-panel {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px dashed rgba(212, 175, 55, 0.5);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 18px;
-            font-size: 0.85rem;
+        /* 전광판 (스크롤 텍스트) */
+        .marquee-box {
+            background: #000;
+            border: 1px solid var(--neon-gold);
+            border-radius: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 5px 0;
+            margin-bottom: 12px;
+            box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.4);
         }
-        .pred-title { color: var(--gold); font-weight: bold; margin-bottom: 6px; font-size: 0.8rem; letter-spacing: 1px; display: flex; justify-content: space-between; }
-        .pred-content { color: #cbd5e1; line-height: 1.4; }
-        .highlight-gold { color: var(--gold); font-weight: bold; }
+        .marquee-text {
+            display: inline-block;
+            font-family: 'Share Tech Mono', monospace;
+            color: #34d399;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            animation: marquee 18s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* 결과 전광판 */
+        .dashboard {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 12px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid rgba(251, 191, 36, 0.5);
+            margin-bottom: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .win-rate { font-size: 1.4rem; font-weight: 800; color: var(--neon-gold); text-shadow: 0 0 8px var(--neon-gold-glow); }
+        .res-hand-text { margin-top: 2px; font-size: 0.9rem; color: #f8fafc; font-weight: 600; }
+
+        /* 족보 랭킹 블랙 패널 */
+        .ranking-panel {
+            background: var(--dark-card);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.9);
+        }
+        .ranking-title { color: var(--neon-gold); font-size: 0.7rem; font-weight: bold; letter-spacing: 1px; margin-bottom: 6px; text-align: center; }
+        
+        .ranking-list { display: flex; flex-direction: column; gap: 2px; }
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 6px;
+            font-size: 0.7rem;
+            color: #475569;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .rank-item.active {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--neon-gold);
+            border: 1px solid var(--neon-gold);
+            font-weight: bold;
+            box-shadow: 0 0 12px var(--neon-gold-glow);
+            transform: scale(1.02);
+        }
 
         /* 카드 슬롯 영역 */
-        .section-group { margin-bottom: 15px; }
-        .area-label { font-size: 0.7rem; letter-spacing: 2px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; font-weight: bold; }
-        .card-row { display: flex; gap: 6px; justify-content: center; }
+        .section-group { margin-bottom: 10px; }
+        .area-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--neon-gold); margin-bottom: 4px; text-transform: uppercase; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .card-row { display: flex; gap: 5px; justify-content: center; }
         
-        /* 트럼프 카드 슬롯 디자인 */
         .card-slot {
-            width: 52px; height: 78px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px dashed rgba(212, 175, 55, 0.5);
+            width: 48px; height: 72px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px dashed rgba(251, 191, 36, 0.4);
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
             transition: all 0.2s ease;
             position: relative;
         }
         .card-slot:active { transform: scale(0.95); }
-        .card-slot.empty { color: rgba(212, 175, 55, 0.6); font-size: 1.2rem; }
+        .card-slot.empty { color: rgba(251, 191, 36, 0.5); font-size: 1.1rem; }
 
         .card-slot.filled {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 3px;
+            padding: 4px 2px;
             box-sizing: border-box;
+            animation: popIn 0.25s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
         .card-slot.filled.hearts, .card-slot.filled.diams { color: #dc2626; }
         .card-slot.filled.spades, .card-slot.filled.clubs { color: #0f172a; }
 
-        .card-top-left { align-self: flex-start; font-size: 0.7rem; line-height: 1; font-weight: 700; }
-        .card-center-symbol { font-size: 1.4rem; line-height: 1; }
-        .card-bottom-right { align-self: flex-end; font-size: 0.7rem; line-height: 1; font-weight: 700; transform: rotate(180deg); }
+        .card-top-left { align-self: flex-start; font-size: 0.65rem; line-height: 1; font-weight: 700; }
+        .card-center-symbol { font-size: 1.2rem; line-height: 1; }
+        .card-bottom-right { align-self: flex-end; font-size: 0.65rem; line-height: 1; font-weight: 700; transform: rotate(180deg); }
 
-        /* 리셋 버튼 */
+        /* 하단 버튼 및 크레딧 */
+        .footer-box { display: flex; flex-direction: column; gap: 6px; margin-top: 5px; }
         .reset-btn {
             width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 10px;
-            border-radius: 10px;
+            background: linear-gradient(to bottom, #b91c1c, #991b1b);
+            border: 1px solid #f87171;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
             letter-spacing: 1px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
-        .reset-btn:hover { background: rgba(212, 175, 55, 0.2); }
+        .reset-btn:hover { background: linear-gradient(to bottom, #991b1b, #7f1d1d); }
+        
+        .creator-credit {
+            text-align: center;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
         /* 모달 디자인 */
         .modal { 
@@ -131,46 +199,66 @@
             justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-content { 
-            background: #111827; border: 2px solid var(--gold); border-radius: 20px; 
-            padding: 20px; width: 310px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;
+            background: #0f172a; border: 2px solid var(--neon-gold); border-radius: 20px; 
+            padding: 18px; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;
         }
-        .modal-title { color: var(--gold); font-size: 0.9rem; margin-bottom: 12px; letter-spacing: 1px; font-weight: 700; }
-        .suit-group { display: flex; justify-content: space-around; margin-bottom: 12px; }
+        .modal-title { color: var(--neon-gold); font-size: 0.85rem; margin-bottom: 10px; letter-spacing: 1px; font-weight: 700; }
+        .suit-group { display: flex; justify-content: space-around; margin-bottom: 10px; }
         .suit-btn { 
-            font-size: 1.3rem; background: #1f2937; border: 1px solid #4b5563; 
-            width: 45px; height: 45px; border-radius: 10px; cursor: pointer; color: white; 
+            font-size: 1.2rem; background: #1e293b; border: 1px solid #475569; 
+            width: 40px; height: 40px; border-radius: 10px; cursor: pointer; color: white; 
             display: flex; align-items: center; justify-content: center;
         }
-        .suit-btn.active { background: var(--gold); color: #111; border-color: var(--gold); transform: scale(1.05); }
-        .rank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+        .suit-btn.active { background: var(--neon-gold); color: #000; border-color: var(--neon-gold); transform: scale(1.05); }
+        .rank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 10px; }
         .rank-btn { 
-            background: #1f2937; border: 1px solid #374151; color: white; 
-            padding: 8px 0; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.9rem; 
+            background: #1e293b; border: 1px solid #334155; color: white; 
+            padding: 7px 0; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; 
         }
-        .rank-btn:hover { background: #374151; }
-        .close-modal { background: #ef4444; color: white; border: none; width: 100%; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .rank-btn:hover { background: #334155; }
+        .close-modal { background: #ef4444; color: white; border: none; width: 100%; padding: 7px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div>
-        <!-- 전광판 -->
-        <div class="dashboard">
-            <div class="dashboard-title">Live Hand Analysis</div>
-            <div class="win-rate" id="res-winrate">- %</div>
-            <div class="res-hand-text" id="res-hand">내 패와 공유패를 입력하세요</div>
+        <!-- 카지노 타이틀 -->
+        <div class="casino-header">
+            <h1 class="casino-title">♠️ VIP TEXAS HOLD'EM ♣️</h1>
         </div>
 
-        <!-- [신규] 드로우 및 기대 족보 예측 패널 -->
-        <div class="prediction-panel">
-            <div class="pred-title"><span>POTENTIAL & DRAWS</span> <span id="out-count">OUTS: 0</span></div>
-            <div class="pred-content" id="pred-text">카드가 입력되면 가능한 드로우와 기대 족보를 분석합니다.</div>
+        <!-- 전광판 스크롤 텍스트 -->
+        <div class="marquee-box">
+            <div class="marquee-text">💰 딜러가 카드를 섞고 있습니다! 플랍과 턴의 기회를 잡으세요! 🎲 올인 또는 다이? 승자는 단 한 명입니다! 🔥 </div>
+        </div>
+
+        <!-- 상단 결과 전광판 -->
+        <div class="dashboard">
+            <div class="win-rate" id="res-winrate">READY</div>
+            <div class="res-hand-text" id="res-hand">내 패와 공유패를 선택해주세요</div>
+        </div>
+
+        <!-- 족보 순위 리스트 패널 -->
+        <div class="ranking-panel">
+            <div class="ranking-title">✦ LIVE HAND RANKINGS ✦</div>
+            <div class="ranking-list" id="rankingList">
+                <div class="rank-item" data-hand="Royal Flush"><span>1. 로열 플러시</span><span>Royal Flush</span></div>
+                <div class="rank-item" data-hand="Straight Flush"><span>2. 스트레이트 플러시</span><span>St. Flush</span></div>
+                <div class="rank-item" data-hand="Four of a Kind"><span>3. 포카드</span><span>4 of a Kind</span></div>
+                <div class="rank-item" data-hand="Full House"><span>4. 풀하우스</span><span>Full House</span></div>
+                <div class="rank-item" data-hand="Flush"><span>5. 플러시</span><span>Flush</span></div>
+                <div class="rank-item" data-hand="Straight"><span>6. 스트레이트</span><span>Straight</span></div>
+                <div class="rank-item" data-hand="Three of a Kind"><span>7. 트리플</span><span>3 of a Kind</span></div>
+                <div class="rank-item" data-hand="Two Pair"><span>8. 투페어</span><span>Two Pair</span></div>
+                <div class="rank-item" data-hand="Pair"><span>9. 원페어</span><span>Pair</span></div>
+                <div class="rank-item" data-hand="High Card"><span>10. 하이카드</span><span>High Card</span></div>
+            </div>
         </div>
 
         <!-- 공유 카드 영역 -->
         <div class="section-group">
-            <div class="area-label">Community Cards (공유패)</div>
+            <div class="area-label"><span>🎲</span> Community Cards (공유패)</div>
             <div class="card-row" id="board-cards">
                 <div class="card-slot empty" onclick="openModal('board', 0)">+</div>
                 <div class="card-slot empty" onclick="openModal('board', 1)">+</div>
@@ -182,7 +270,7 @@
 
         <!-- 내 패 영역 -->
         <div class="section-group">
-            <div class="area-label">My Hand (내 패)</div>
+            <div class="area-label"><span>🃏</span> My Hand (내 패)</div>
             <div class="card-row" id="hole-cards">
                 <div class="card-slot empty" onclick="openModal('hole', 0)">+</div>
                 <div class="card-slot empty" onclick="openModal('hole', 1)">+</div>
@@ -190,7 +278,11 @@
         </div>
     </div>
 
-    <button class="reset-btn" onclick="resetAll()">전체 초기화 (RESET)</button>
+    <!-- 하단 버튼 및 제작자 크레딧 -->
+    <div class="footer-box">
+        <button class="reset-btn" onclick="resetAll()">테이블 초기화 (RESET)</button>
+        <div class="creator-credit">Designed & Developed by 천상민</div>
+    </div>
 </div>
 
 <!-- 모달 팝업 -->
@@ -217,8 +309,8 @@
     let selectedSuit = 'spades';
 
     const suits = { 'spades': '♠', 'hearts': '♥', 'diams': '♦', 'clubs': '♣' };
+    const suitLetters = { 'spades': 's', 'hearts': 'h', 'diams': 'd', 'clubs': 'c' };
     const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
-    const rankValues = { '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':11, 'Q':12, 'K':13, 'A':14 };
 
     const rankGrid = document.getElementById('rankGrid');
     ranks.forEach(r => {
@@ -277,14 +369,23 @@
         }
     }
 
+    function highlightRanking(handNameKey) {
+        document.querySelectorAll('.rank-item').forEach(el => {
+            if (el.getAttribute('data-hand') === handNameKey) {
+                el.classList.add('active');
+            } else {
+                el.classList.remove('active');
+            }
+        });
+    }
+
     function resetAll() {
         board = [null, null, null, null, null];
         hole = [null, null];
         renderUI();
-        document.getElementById('res-hand').innerText = '내 패와 공유패를 입력하세요';
-        document.getElementById('res-winrate').innerText = '- %';
-        document.getElementById('pred-text').innerText = '카드가 입력되면 가능한 드로우와 기대 족보를 분석합니다.';
-        document.getElementById('out-count').innerText = 'OUTS: 0';
+        document.getElementById('res-hand').innerText = '내 패와 공유패를 선택해주세요';
+        document.getElementById('res-winrate').innerText = 'READY';
+        document.querySelectorAll('.rank-item').forEach(el => el.classList.remove('active'));
     }
 
     function calculatePoker() {
@@ -293,90 +394,53 @@
         const totalCards = [...activeHole, ...activeBoard];
 
         if (activeHole.length === 0) {
-            document.getElementById('res-hand').innerText = '내 패를 최소 1장 이상 입력해주세요';
-            document.getElementById('res-winrate').innerText = '- %';
-            document.getElementById('pred-text').innerText = '내 패(Hole Cards)를 먼저 입력해주세요.';
+            document.getElementById('res-hand').innerText = '내 패를 최소 1장 이상 선택해주세요';
+            document.getElementById('res-winrate').innerText = 'READY';
+            document.querySelectorAll('.rank-item').forEach(el => el.classList.remove('active'));
             return;
         }
 
-        // 1. 현재 완성된 족보 계산
-        let currentHandName = "탑 / 하이카드";
         if (totalCards.length >= 5) {
-            let cardStrings = totalCards.map(c => c.rank + c.suit[0]);
-            let solved = Hand.solve(cardStrings);
-            const handNames = {
-                'Royal Flush': '로열 플러시 (1위)', 'Straight Flush': '스트레이트 플러시 (2위)',
-                'Four of a Kind': '포카드 (3위)', 'Full House': '풀하우스 (4위)',
-                'Flush': '플러시 (5위)', 'Straight': '스트레이트 (6위)',
-                'Three of a Kind': '트리플 (7위)', 'Two Pair': '투페어 (8위)',
-                'Pair': '원페어 (9위)', 'High Card': '하이카드 (10위)'
-            };
-            currentHandName = handNames[solved.name] || solved.name;
-        } else if (totalCards.length > 0) {
-            // 5장 미만일 때 부분 분석
-            let ranksOnly = totalCards.map(c => c.rank);
-            let counts = {};
-            ranksOnly.forEach(r => counts[r] = (counts[r] || 0) + 1);
-            let maxCount = Math.max(...Object.values(counts));
-            if (maxCount === 4) currentHandName = "포카드 가능성 보유";
-            else if (maxCount === 3) currentHandName = "트리플 완성/보유";
-            else if (maxCount === 2) currentHandName = "페어 보유 중";
-            else currentHandName = `조합 진행중 (${totalCards.length}/5장)`;
+            try {
+                let cardStrings = totalCards.map(c => c.rank + suitLetters[c.suit]);
+                let solved = Hand.solve(cardStrings);
+                
+                const handNames = {
+                    'Royal Flush': '로열 플러시 (JACKPOT!)', 
+                    'Straight Flush': '스트레이트 플러시',
+                    'Four of a Kind': '포카드 (4 of a Kind)', 
+                    'Full House': '풀하우스',
+                    'Flush': '플러시', 
+                    'Straight': '스트레이트',
+                    'Three of a Kind': '트리플', 
+                    'Two Pair': '투페어',
+                    'Pair': '원페어', 
+                    'High Card': '하이카드'
+                };
+
+                let koreanName = handNames[solved.name] || solved.name;
+                document.getElementById('res-hand').innerText = koreanName;
+                document.getElementById('res-winrate').innerText = "🔥 HIT!";
+                highlightRanking(solved.name);
+                return;
+            } catch (e) {
+                console.error(e);
+            }
         }
+
+        let ranksOnly = totalCards.map(c => c.rank);
+        let counts = {};
+        ranksOnly.forEach(r => counts[r] = (counts[r] || 0) + 1);
+        let maxCount = Math.max(...Object.values(counts));
+        let currentHandName = `조합 진행중 (${totalCards.length}/5장)`;
+        
+        if (maxCount === 4) { currentHandName = "포카드 노리는 중"; highlightRanking('Four of a Kind'); }
+        else if (maxCount === 3) { currentHandName = "트리플 보유 중"; highlightRanking('Three of a Kind'); }
+        else if (maxCount === 2) { currentHandName = "페어 보유 중"; highlightRanking('Pair'); }
+        else { document.querySelectorAll('.rank-item').forEach(el => el.classList.remove('active')); }
+
         document.getElementById('res-hand').innerText = currentHandName;
-
-        // 2. 드로우 및 기대 족보 예측 로직 (플랍/턴 상황 분석)
-        analyzeDrawsAndPredictions(activeHole, activeBoard, totalCards.length);
-    }
-
-    function analyzeDrawsAndPredictions(holeCards, boardCards, totalLen) {
-        let suitCounts = { spades: 0, hearts: 0, diams: 0, clubs: 0 };
-        let allCards = [...holeCards, ...boardCards];
-        allCards.forEach(c => suitCounts[c.suit]++);
-
-        let predText = "";
-        let outs = 0;
-
-        // 플러시 드로우 체크 (한 수트가 4장인 경우)
-        let flushDrawSuit = Object.keys(suitCounts).find(s => suitCounts[s] === 4);
-        if (flushDrawSuit) {
-            outs += 9;
-            predText += `🔥 <span class="highlight-gold">플러시 드로우 (Flush Draw)</span>: ${suits[flushDrawSuit]} 수트가 4장입니다. 남은 플러시 카드는 약 9장! (확률 약 35%)\n`;
-        }
-
-        // 스트레이트 드로우 체크 (간이 분석)
-        let uniqueRanks = [...new Set(allCards.map(c => rankValues[c.rank]))].sort((a,b)=>a-b);
-        let consecutive = 1, maxCons = 1;
-        for(let i=1; i<uniqueRanks.length; i++) {
-            if(uniqueRanks[i] === uniqueRanks[i-1] + 1) { consecutive++; maxCons = Math.max(maxCons, consecutive); }
-            else if(uniqueRanks[i] !== uniqueRanks[i-1]) { consecutive = 1; }
-        }
-        if (maxCons === 4) {
-            outs += 8;
-            predText += `⚡ <span class="highlight-gold">오픈엔드 스트레이트 드로우</span>: 양쪽이 뚫린 스트레이트 대기 중! (아웃츠 약 8장)\n`;
-        } else if (maxCons === 3 && totalLen >= 3) {
-            predText += `✨ <span class="highlight-gold">거트샷(인사이드) 스트레이트</span> 가능성이 보입니다.\n`;
-        }
-
-        if (boardCards.length === 0) {
-            predText = `💡 프리플랍 단계: 핸드 파워를 기반으로 유리한 싸움을 준비하세요.`;
-            outs = 0;
-        } else if (predText === "") {
-            predText = `📌 현재 보드에서 추가 역전을 위한 드로우를 기다리는 중이거나 탑페어 중심의 운영 구간입니다.`;
-        }
-
-        document.getElementById('pred-text').innerHTML = predText;
-        document.getElementById('out-count').innerText = `OUTS: ${outs}`;
-
-        // 승률 표시 업데이트
-        let winRateVal = "NORMAL";
-        if (boardCards.length === 0) {
-            let r1 = holeCards[0].rank, r2 = holeCards[1].rank;
-            winRateVal = (r1 === r2 || r1 === 'A' || r2 === 'A') ? "HIGH (65%+)" : "MID (45%)";
-        } else {
-            winRateVal = outs > 0 ? `HIGH (${outs * 4}%)` : "STABLE";
-        }
-        document.getElementById('res-winrate').innerText = winRateVal;
+        document.getElementById('res-winrate').innerText = `${totalCards.length}/7 CARDS`;
     }
 </script>
 </body>
