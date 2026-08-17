@@ -619,16 +619,8 @@
         board = [null, null, null, null, null];
         hole = [null, null];
         
-        const clearSlots = (containerId) => {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            for(let slot of container.children) {
-                slot.className = 'card-slot empty';
-                slot.innerHTML = '+';
-            }
-        };
-        clearSlots('board-cards');
-        clearSlots('hole-cards');
+        renderSlotsWithHighlight('board-cards', board, null);
+        renderSlotsWithHighlight('hole-cards', hole, null);
 
         document.getElementById('res-hand').innerText = '내 패와 공유패를 선택해주세요';
         document.getElementById('res-winrate').innerText = '대기 중';
@@ -686,7 +678,6 @@
         const filledBoard = board.filter(c => c !== null);
         const totalCards = [...filledHole, ...filledBoard];
 
-        // 중복 카드 검사
         let cardStringsSet = new Set();
         let hasDuplicate = false;
         totalCards.forEach(c => {
@@ -795,9 +786,15 @@
         const container = document.getElementById(containerId);
         if (!container) return;
         const slots = container.children;
+        let type = containerId === 'board-cards' ? 'board' : 'hole';
+
         for (let i = 0; i < slots.length; i++) {
             let slot = slots[i];
             let card = items[i];
+            
+            // 항상 클릭 시 모달이 정상적으로 열리도록 onclick 바인딩 갱신
+            slot.onclick = () => openModal(type, i);
+
             if (card) {
                 let winningClass = (checkWinningFn && checkWinningFn(card)) ? ' winning-card' : '';
                 slot.className = `card-slot filled ${card.suit}${winningClass}`;
