@@ -39,7 +39,6 @@
             box-sizing: border-box;
         }
 
-        /* 상단 카지노 네온 타이틀 */
         .casino-header { text-align: center; margin-bottom: 8px; }
         .casino-title {
             font-size: 1rem;
@@ -51,7 +50,6 @@
             margin: 0;
         }
 
-        /* 전광판 (스크롤 텍스트) */
         .marquee-box {
             background: #000;
             border: 1px solid var(--neon-gold);
@@ -75,7 +73,6 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* 결과 전광판 */
         .dashboard {
             background: rgba(15, 23, 42, 0.9);
             padding: 8px;
@@ -89,7 +86,6 @@
         .res-hand-text { margin-top: 2px; font-size: 0.8rem; color: #f8fafc; font-weight: 600; }
         .res-kicker-text { margin-top: 2px; font-size: 0.65rem; color: #34d399; font-family: 'Share Tech Mono', monospace; }
 
-        /* 카드 랭크 파워 순위표 바 */
         .rank-power-bar {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(251, 191, 36, 0.3);
@@ -126,7 +122,6 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.4);
             transition: all 0.2s;
         }
-        /* 파워 바 내 카드 활성화(불빛) 효과 */
         .power-mini-badge.active {
             background: rgba(251, 191, 36, 0.25);
             border-color: var(--neon-gold);
@@ -135,7 +130,6 @@
             transform: scale(1.1);
         }
 
-        /* 족보 랭킹 카드 패널 */
         .ranking-panel {
             background: var(--dark-card);
             border: 1px solid rgba(251, 191, 36, 0.4);
@@ -227,7 +221,6 @@
         .mc-mid { font-size: 0.65rem; line-height: 1; }
         .mc-bot { align-self: flex-end; line-height: 1; transform: rotate(180deg); font-size: 0.4rem; }
 
-        /* 카드 슬롯 영역 */
         .section-group { margin-bottom: 8px; }
         .area-label { font-size: 0.6rem; letter-spacing: 1px; color: var(--neon-gold); margin-bottom: 3px; text-transform: uppercase; font-weight: bold; display: flex; align-items: center; gap: 4px; }
         .card-row { display: flex; gap: 4px; justify-content: center; }
@@ -268,7 +261,6 @@
         .card-slot.filled.hearts, .card-slot.filled.diams { color: #dc2626; }
         .card-slot.filled.spades, .card-slot.filled.clubs { color: #0f172a; }
 
-        /* 핵심 승리 카드 네온 효과 */
         .card-slot.filled.winning-card {
             border: 2px solid var(--neon-gold) !important;
             box-shadow: 0 0 14px var(--neon-gold), inset 0 0 6px var(--neon-gold-glow) !important;
@@ -284,7 +276,6 @@
         .card-center-symbol { font-size: 1.1rem; line-height: 1; }
         .card-bottom-right { align-self: flex-end; font-size: 0.6rem; line-height: 1; font-weight: 700; transform: rotate(180deg); }
 
-        /* 하단 진행바 & 크레딧 스타일 */
         .footer-box { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
         .reset-btn {
             width: 100%;
@@ -326,7 +317,6 @@
             text-transform: uppercase;
         }
 
-        /* 모달 디자인 */
         .modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.85); z-index: 100; 
@@ -357,24 +347,20 @@
 
 <div class="app-container">
     <div>
-        <!-- 카지노 타이틀 -->
         <div class="casino-header">
             <h1 class="casino-title">♠️ VIP 텍사스 홀덤 ♣️</h1>
         </div>
 
-        <!-- 전광판 스크롤 텍스트 -->
         <div class="marquee-box">
             <div class="marquee-text">💰 딜러가 카드를 섞고 있습니다! 플랍과 턴의 기회를 잡으세요! 🎲 올인 또는 다이? 승자는 단 한 명입니다! 🔥 </div>
         </div>
 
-        <!-- 상단 결과 전광판 -->
         <div class="dashboard">
             <div class="win-rate" id="res-winrate">대기 중</div>
             <div class="res-hand-text" id="res-hand">내 패와 공유패를 선택해주세요</div>
             <div class="res-kicker-text" id="res-kicker">동일 족보 시 하이카드(알파벳/숫자) 순위 판정</div>
         </div>
 
-        <!-- 카드 랭크 파워 순위표 (낮음 ➔ 높음) -->
         <div class="rank-power-bar">
             <div class="power-bar-title">
                 <span>⚡ 숫자·알파벳 순위</span>
@@ -397,14 +383,12 @@
             </div>
         </div>
 
-        <!-- 카드형 족보 리스트 패널 -->
         <div class="ranking-panel">
             <div class="ranking-panel-header">
                 <div class="ranking-title">✦ 실시간 족보 가이드 ✦</div>
                 <button class="toggle-btn" id="togglePanelBtn" onclick="toggleRankingPanel()">[ 닫기 ]</button>
             </div>
             <div class="ranking-content" id="rankingContent">
-                <!-- 1. 로열 플러시 -->
                 <div class="rank-card-item" data-hand="Royal Flush">
                     <div class="rank-header"><span>1. 로열 플러시</span><span>같은 모양</span></div>
                     <div class="mini-cards-row">
@@ -415,7 +399,6 @@
                         <div class="mini-card hearts"><span class="mc-top">A</span><span class="mc-mid">♥</span><span class="mc-bot">A</span></div>
                     </div>
                 </div>
-                <!-- 6. 스트레이트 -->
                 <div class="rank-card-item" data-hand="Straight">
                     <div class="rank-header"><span>6. 스트레이트</span><span>연속되는숫자</span></div>
                     <div class="mini-cards-row">
@@ -426,7 +409,6 @@
                         <div class="mini-card hearts"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
-                <!-- 2. 스트레이트 플러시 -->
                 <div class="rank-card-item" data-hand="Straight Flush">
                     <div class="rank-header"><span>2. 스트레이트플러시</span><span>동일문양 연속</span></div>
                     <div class="mini-cards-row">
@@ -437,7 +419,6 @@
                         <div class="mini-card hearts"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
-                <!-- 7. 트리플 -->
                 <div class="rank-card-item" data-hand="Three of a Kind">
                     <div class="rank-header"><span>7. 트리플</span><span>같은숫자 3장</span></div>
                     <div class="mini-cards-row">
@@ -448,7 +429,6 @@
                         <div class="mini-card dimmed"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
-                <!-- 3. 포카드 -->
                 <div class="rank-card-item" data-hand="Four of a Kind">
                     <div class="rank-header"><span>3. 포카드</span><span>같은숫자 4장</span></div>
                     <div class="mini-cards-row">
@@ -459,7 +439,6 @@
                         <div class="mini-card dimmed"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
-                <!-- 8. 투페어 -->
                 <div class="rank-card-item" data-hand="Two Pair">
                     <div class="rank-header"><span>8. 투페어</span><span>쌍 2개 조합</span></div>
                     <div class="mini-cards-row">
@@ -470,7 +449,6 @@
                         <div class="mini-card dimmed"><span class="mc-top">10</span><span class="mc-mid">♥</span><span class="mc-bot">10</span></div>
                     </div>
                 </div>
-                <!-- 4. 풀하우스 -->
                 <div class="rank-card-item" data-hand="Full House">
                     <div class="rank-header"><span>4. 풀하우스</span><span>트리플+페어</span></div>
                     <div class="mini-cards-row">
@@ -481,7 +459,6 @@
                         <div class="mini-card hearts"><span class="mc-top">K</span><span class="mc-mid">♥</span><span class="mc-bot">K</span></div>
                     </div>
                 </div>
-                <!-- 9. 원페어 -->
                 <div class="rank-card-item" data-hand="Pair">
                     <div class="rank-header"><span>9. 원페어</span><span>같은숫자 2장</span></div>
                     <div class="mini-cards-row">
@@ -492,7 +469,6 @@
                         <div class="mini-card dimmed"><span class="mc-top">K</span><span class="mc-mid">♥</span><span class="mc-bot">K</span></div>
                     </div>
                 </div>
-                <!-- 5. 플러시 -->
                 <div class="rank-card-item" data-hand="Flush">
                     <div class="rank-header"><span>5. 플러시</span><span>같은모양 5장</span></div>
                     <div class="mini-cards-row">
@@ -503,7 +479,6 @@
                         <div class="mini-card spades"><span class="mc-top">K</span><span class="mc-mid">♠</span><span class="mc-bot">K</span></div>
                     </div>
                 </div>
-                <!-- 10. 하이카드 -->
                 <div class="rank-card-item" data-hand="High Card">
                     <div class="rank-header"><span>10. 하이카드</span><span>가장높은패</span></div>
                     <div class="mini-cards-row">
@@ -517,7 +492,6 @@
             </div>
         </div>
 
-        <!-- 공유 카드 영역 -->
         <div class="section-group">
             <div class="area-label"><span>🎲</span> 공유패</div>
             <div class="card-row" id="board-cards">
@@ -529,7 +503,6 @@
             </div>
         </div>
 
-        <!-- 내 패 영역 -->
         <div class="section-group">
             <div class="area-label"><span>🃏</span> 내 패</div>
             <div class="card-row" id="hole-cards">
@@ -539,7 +512,6 @@
         </div>
     </div>
 
-    <!-- 하단 버튼, 진행바 및 크레딧 -->
     <div class="footer-box">
         <button class="reset-btn" onclick="resetAll()">테이블 초기화</button>
         
@@ -553,7 +525,6 @@
     </div>
 </div>
 
-<!-- 모달 팝업 -->
 <div class="modal" id="cardModal">
     <div class="modal-content">
         <div class="modal-title">카드 선택</div>
@@ -669,7 +640,6 @@
         document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
     }
 
-    // 간단한 미완성 패 조합/임시 족보 판단 (포커솔버가 5장 미만일 때 에러를 내므로 보완)
     function evaluatePartialHand(totalCards) {
         const ranksCount = {};
         const suitsCount = {};
@@ -745,9 +715,15 @@
 
             if (totalCards.length >= 5) {
                 var convertedCards = totalCards.map(c => c.rank + suitLetters[c.suit]);
+                let uniqueCards = new Set(convertedCards);
+                if (uniqueCards.size !== convertedCards.length) {
+                    document.getElementById('res-hand').innerText = '중복된 카드가 존재합니다!';
+                    document.getElementById('res-winrate').innerText = '입력 오류';
+                    document.getElementById('res-kicker').innerText = '서로 다른 카드를 선택해주세요.';
+                    return;
+                }
                 solvedHand = Hand.solve(convertedCards);
             } else {
-                // 5장 미만일 때 실시간 가상 판정 제공
                 solvedHand = evaluatePartialHand(totalCards);
             }
 
@@ -774,7 +750,6 @@
                 document.getElementById('res-kicker').innerText = `사용된 카드: ${solvedHand.cards.map(c => c.value + suits[Object.keys(suitLetters).find(k => suitLetters[k] === c.suit)]).join(', ')}`;
                 winningValues = solvedHand.cards.map(c => c.value);
             } else {
-                // 5장 미만일 때 현재 입력된 카드 중 최고 카드들을 파워바에 표시
                 winningValues = totalCards.map(c => c.rank);
                 document.getElementById('res-kicker').innerText = `현재 입력된 카드 수: ${totalCards.length}장 (5장 이상 시 정밀 판정)`;
             }
