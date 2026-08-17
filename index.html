@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Texas Hold'em Pro Expert</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap');
+
+        :root {
+            --table-green: #064e3b;
+            --gold: #d4af37;
+            --dark-glass: rgba(15, 23, 42, 0.7);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at center, #1e3a8a, #0f172a);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--table-green);
+            border: 4px solid var(--gold);
+            border-radius: 40px;
+            padding: 30px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* 전광판 */
+        .dashboard {
+            background: var(--dark-glass);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--gold);
+            margin-bottom: 25px;
+        }
+        .win-rate { font-size: 2.5rem; font-weight: 600; color: var(--gold); }
+
+        /* 카드 슬롯 */
+        .area-label { font-size: 0.8rem; letter-spacing: 2px; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; }
+        .card-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        
+        .card {
+            width: 60px; height: 85px;
+            background: white;
+            color: #111;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card.empty { background: rgba(255,255,255,0.1); border: 2px dashed var(--gold); }
+
+        /* 모달 디자인 */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10; }
+        .modal-content { 
+            background: #111; border: 2px solid var(--gold); border-radius: 20px;
+            margin: 20% auto; padding: 20px; width: 300px;
+        }
+        .rank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+        .btn-rank { background: #222; border: 1px solid var(--gold); color: white; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="dashboard">
+        <div class="area-label">Winning Probability</div>
+        <div class="win-rate" id="res-winrate">0%</div>
+        <div id="res-hand" style="margin-top: 10px; font-size: 0.9rem; color: #cbd5e1;">카드를 선택하세요</div>
+    </div>
+
+    <div class="area-label">Community Cards</div>
+    <div class="card-row" id="board-cards"></div>
+
+    <div class="area-label">My Hand</div>
+    <div class="card-row" id="hole-cards"></div>
+</div>
+
+<!-- 스크립트 생략 (위의 족보 로직과 동일) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pokersolver/2.1.4/pokersolver.min.js"></script>
+<script>
+    // ... (이전 코드의 로직을 그대로 사용) ...
+    // renderUI 및 calculatePoker 함수를 사용하여 위의 HTML 구조에 맞게 매핑
+</script>
+</body>
+</html>
