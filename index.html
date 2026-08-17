@@ -256,7 +256,7 @@
         .card-slot.filled.hearts, .card-slot.filled.diams { color: #dc2626; }
         .card-slot.filled.spades, .card-slot.filled.clubs { color: #0f172a; }
 
-        /* 족보 완성 카드에만 적용되는 네온 불빛 강조 효과 */
+        /* 족보 완성 카드 네온 불빛 강조 효과 */
         .card-slot.filled.winning-card {
             border: 3px solid var(--neon-gold) !important;
             box-shadow: 0 0 16px var(--neon-gold), inset 0 0 8px var(--neon-gold-glow) !important;
@@ -638,6 +638,42 @@
         document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
     }
 
+    // 스트레이트 감지 수동 보완 함수
+    function findBestStraight(totalCards) {
+        let uniqueWeights = [...new Set(totalCards.map(c => rankWeight[c.rank]))].sort((a, b) => b - a);
+        // 에이스(14)가 있을 경우 1(A-2-3-4-5용)도 추가 고려
+        if (uniqueWeights.includes(14)) {
+            uniqueWeights.push(1);
+        }
+
+        let bestStraightCards = null;
+        for (let i = 0; i <= uniqueWeights.length - 5; i++) {
+            let consecutive = true;
+            let subWeights = [];
+            for (let j = 0; j < 5; j++) {
+                subWeights.push(uniqueWeights[i + j]);
+                if (j > 0 && uniqueWeights[i + j - 1] - uniqueWeights[i + j] !== 1) {
+                    consecutive = false;
+                    break;
+                }
+            }
+            if (consecutive) {
+                // 실제 일치하는 카드 5장 추출
+                let matched = [];
+                for (let w of subWeights) {
+                    let targetW = (w === 1 ? 14 : w);
+                    let foundCard = totalCards.find(c => rankWeight[c.rank] === targetW && !matched.includes(c));
+                    if (foundCard) matched.push(foundCard);
+                }
+                if (matched.length === 5) {
+                    bestStraightCards = matched;
+                    break;
+                }
+            }
+        }
+        return bestStraightCards;
+    }
+
     function evaluatePartialHand(totalCards) {
         const ranksCount = {};
         const suitsCount = {};
@@ -718,15 +754,33 @@
                 return;
             }
 
+            // 스트레이트(연속숫자) 수동 판정 먼저 체크
+            let straightCards = totalCards.length >= 5 ? findBestStraight(totalCards) : null;
+
             if (totalCards.length >= 5) {
                 let HandLib = (typeof Hand !== 'undefined') ? Hand : (typeof Pokersolver !== 'undefined' ? Pokersolver.Hand : null);
                 if (HandLib) {
                     solvedHand = HandLib.solve(convertedCards);
+                    // 라이브러리가 스트레이트를 놓쳤으나 우리 수동 로직에는 잡힌 경우 강제 보정
+                    if (straightCards && solvedHand.name !== 'Straight Flush' && solvedHand.name !== 'Royal Flush' && solvedHand.name !== 'Straight') {
+                        // 만약 플러시가 아니라면 스트레이트로 인정
+                        if (solvedHand.name !== 'Flush') {
+                            solvedHand.name = 'Straight';
+                            solvedHand.descr = '스트레이트 완성';
+                            solvedHand.cards = straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] }));
+                        }
+                    }
                 } else {
                     solvedHand = evaluatePartialHand(totalCards);
+                    if (straightCards) {
+                        solvedHand = { name: 'Straight', descr: '스트레이트 완성', cards: straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] })) };
+                    }
                 }
             } else {
                 solvedHand = evaluatePartialHand(totalCards);
+                if (straightCards) {
+                    solvedHand = { name: 'Straight', descr: '스트레이트 완성', cards: straightCards.map(c => ({ value: c.rank, suit: suitLetters[c.suit] })) };
+                }
             }
 
             const handNameMap = {
@@ -756,7 +810,6 @@
                 valuesToCompare = solvedHand.cards.map(c => c.value);
                 document.getElementById('res-kicker').innerText = `💡 족보 완성 카드: ${winningCardsDesc.join(', ')}`;
 
-                // 족보에 사용된 정확한 카드들에만 불(winning-card 클래스) 들어오게 처리
                 let winningSuits = solvedHand.cards.map(c => c.suit);
                 let cloneValues = [...valuesToCompare];
                 let cloneSuits = [...winningSuits];
