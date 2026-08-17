@@ -86,7 +86,51 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.5);
         }
         .win-rate { font-size: 1.2rem; font-weight: 800; color: var(--neon-gold); text-shadow: 0 0 8px var(--neon-gold-glow); }
-        .res-hand-text { margin-top: 1px; font-size: 0.8rem; color: #f8fafc; font-weight: 600; }
+        .res-hand-text { margin-top: 2px; font-size: 0.8rem; color: #f8fafc; font-weight: 600; }
+        .res-kicker-text { margin-top: 2px; font-size: 0.65rem; color: #34d399; font-family: 'Share Tech Mono', monospace; }
+
+        /* 카드 랭크 파워 순위표 바 (새로 추가) */
+        .rank-power-bar {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 8px;
+            padding: 6px 8px;
+            margin-bottom: 8px;
+        }
+        .power-bar-title {
+            font-size: 0.58rem;
+            color: var(--neon-gold);
+            font-weight: bold;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 0.5px;
+        }
+        .power-cards-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 2px;
+        }
+        .power-mini-badge {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 3px;
+            width: 20px;
+            height: 24px;
+            font-size: 0.55rem;
+            font-weight: bold;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+        /* 에이스나 주요 알파벳 강조 */
+        .power-mini-badge.high {
+            background: rgba(251, 191, 36, 0.2);
+            border-color: var(--neon-gold);
+            color: var(--neon-gold);
+        }
 
         /* 족보 랭킹 카드 패널 (상태창 스타일) */
         .ranking-panel {
@@ -120,16 +164,13 @@
         }
         .toggle-btn:hover { background: var(--neon-gold); color: #000; }
 
-        /* 족보 내용 컨테이너 (접고 펴기 대상) */
         .ranking-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
             transition: all 0.3s ease;
         }
-        .ranking-content.collapsed {
-            display: none;
-        }
+        .ranking-content.collapsed { display: none; }
 
         .rank-card-item {
             background: rgba(255, 255, 255, 0.02);
@@ -139,7 +180,6 @@
             transition: all 0.2s;
         }
         
-        /* 족보 완성 시 네온 불빛 테두리 강조 효과 */
         .rank-card-item.active {
             background: rgba(251, 191, 36, 0.15);
             border: 2px solid var(--neon-gold);
@@ -162,12 +202,7 @@
         }
         .rank-header span:last-child { color: var(--neon-gold); font-size: 0.52rem; }
 
-        /* 미니 카드 컨테이너 */
-        .mini-cards-row {
-            display: flex;
-            gap: 2px;
-            justify-content: flex-start;
-        }
+        .mini-cards-row { display: flex; gap: 2px; justify-content: flex-start; }
         .mini-card {
             width: 22px; height: 32px;
             background: #ffffff;
@@ -229,6 +264,18 @@
         }
         .card-slot.filled.hearts, .card-slot.filled.diams { color: #dc2626; }
         .card-slot.filled.spades, .card-slot.filled.clubs { color: #0f172a; }
+
+        /* 핵심 승리 카드 네온 효과 */
+        .card-slot.filled.winning-card {
+            border: 2px solid var(--neon-gold) !important;
+            box-shadow: 0 0 14px var(--neon-gold), inset 0 0 6px var(--neon-gold-glow) !important;
+            transform: scale(1.05);
+            animation: cardGlow 1.2s infinite alternate;
+        }
+        @keyframes cardGlow {
+            0% { box-shadow: 0 0 6px var(--neon-gold-glow); }
+            100% { box-shadow: 0 0 16px var(--neon-gold); }
+        }
 
         .card-top-left { align-self: flex-start; font-size: 0.6rem; line-height: 1; font-weight: 700; }
         .card-center-symbol { font-size: 1.1rem; line-height: 1; }
@@ -321,9 +368,33 @@
         <div class="dashboard">
             <div class="win-rate" id="res-winrate">대기 중</div>
             <div class="res-hand-text" id="res-hand">내 패와 공유패를 선택해주세요</div>
+            <div class="res-kicker-text" id="res-kicker">동일 족보 시 하이카드(알파벳/숫자) 순위 판정</div>
         </div>
 
-        <!-- 카드형 족보 리스트 패널 (상태창 토글 적용) -->
+        <!-- 카드 랭크 파워 순위표 (낮음 ➔ 높음) -->
+        <div class="rank-power-bar">
+            <div class="power-bar-title">
+                <span>⚡ 카드 숫자·알파벳 파워 순위</span>
+                <span style="color:#34d399;">(좌: 약함 ➔ 우: 강함)</span>
+            </div>
+            <div class="power-cards-container">
+                <div class="power-mini-badge">2</div>
+                <div class="power-mini-badge">3</div>
+                <div class="power-mini-badge">4</div>
+                <div class="power-mini-badge">5</div>
+                <div class="power-mini-badge">6</div>
+                <div class="power-mini-badge">7</div>
+                <div class="power-mini-badge">8</div>
+                <div class="power-mini-badge">9</div>
+                <div class="power-mini-badge">10</div>
+                <div class="power-mini-badge high">J</div>
+                <div class="power-mini-badge high">Q</div>
+                <div class="power-mini-badge high">K</div>
+                <div class="power-mini-badge high" style="background:var(--neon-gold); color:#000;">A</div>
+            </div>
+        </div>
+
+        <!-- 카드형 족보 리스트 패널 -->
         <div class="ranking-panel">
             <div class="ranking-panel-header">
                 <div class="ranking-title">✦ 실시간 족보 가이드 ✦</div>
@@ -515,7 +586,6 @@
         rankGrid.appendChild(btn);
     });
 
-    // 상태창 토글 기능
     function toggleRankingPanel() {
         const content = document.getElementById('rankingContent');
         const btn = document.getElementById('togglePanelBtn');
@@ -547,33 +617,7 @@
         if (currentTargetType === 'board') board[currentTargetIndex] = cardObj;
         else hole[currentTargetIndex] = cardObj;
         closeModal();
-        renderUI();
         calculatePoker();
-    }
-
-    function renderUI() {
-        const boardSlots = document.getElementById('board-cards').children;
-        for (let i = 0; i < 5; i++) {
-            if (board[i]) {
-                let c = board[i];
-                let disp = c.rank === 'T' ? '10' : c.rank;
-                boardSlots[i].className = `card-slot filled ${c.suit}`;
-                boardSlots[i].innerHTML = `<div class="card-top-left">${disp}${suits[c.suit]}</div><div class="card-center-symbol">${suits[c.suit]}</div><div class="card-bottom-right">${disp}${suits[c.suit]}</div>`;
-            } else {
-                boardSlots[i].className = 'card-slot empty'; boardSlots[i].innerHTML = '+';
-            }
-        }
-        const holeSlots = document.getElementById('hole-cards').children;
-        for (let i = 0; i < 2; i++) {
-            if (hole[i]) {
-                let c = hole[i];
-                let disp = c.rank === 'T' ? '10' : c.rank;
-                holeSlots[i].className = `card-slot filled ${c.suit}`;
-                holeSlots[i].innerHTML = `<div class="card-top-left">${disp}${suits[c.suit]}</div><div class="card-center-symbol">${suits[c.suit]}</div><div class="card-bottom-right">${disp}${suits[c.suit]}</div>`;
-            } else {
-                holeSlots[i].className = 'card-slot empty'; holeSlots[i].innerHTML = '+';
-            }
-        }
     }
 
     function highlightRanking(handNameKey) {
@@ -589,9 +633,20 @@
     function resetAll() {
         board = [null, null, null, null, null];
         hole = [null, null];
-        renderUI();
+        
+        const clearSlots = (containerId) => {
+            const slots = document.getElementById(containerId).children;
+            for(let slot of slots) {
+                slot.className = 'card-slot empty';
+                slot.innerHTML = '+';
+            }
+        };
+        clearSlots('board-cards');
+        clearSlots('hole-cards');
+
         document.getElementById('res-hand').innerText = '내 패와 공유패를 선택해주세요';
         document.getElementById('res-winrate').innerText = '대기 중';
+        document.getElementById('res-kicker').innerText = '동일 족보 시 하이카드(알파벳/숫자) 순위 판정';
         document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active'));
     }
 
@@ -600,9 +655,27 @@
         const activeBoard = board.filter(c => c !== null);
         const totalCards = [...activeHole, ...activeBoard];
 
+        const resetSlotStyles = (containerId) => {
+            const slots = document.getElementById(containerId).children;
+            for(let i=0; i<slots.length; i++) {
+                let cObj = (containerId === 'board-cards') ? board[i] : hole[i];
+                if(cObj) {
+                    let disp = cObj.rank === 'T' ? '10' : cObj.rank;
+                    slots[i].className = `card-slot filled ${cObj.suit}`;
+                    slots[i].innerHTML = `<div class="card-top-left">${disp}${suits[cObj.suit]}</div><div class="card-center-symbol">${suits[cObj.suit]}</div><div class="card-bottom-right">${disp}${suits[cObj.suit]}</div>`;
+                } else {
+                    slots[i].className = 'card-slot empty';
+                    slots[i].innerHTML = '+';
+                }
+            }
+        };
+        resetSlotStyles('board-cards');
+        resetSlotStyles('hole-cards');
+
         if (activeHole.length === 0) {
             document.getElementById('res-hand').innerText = '내 패를 최소 1장 이상 선택해주세요';
             document.getElementById('res-winrate').innerText = '대기 중';
+            document.getElementById('res-kicker').innerText = '동일 족보 시 하이카드(알파벳/숫자) 순위 판정';
             document.querySelectorAll('.rank-card-item').forEach(el => el.classList.remove('active'));
             return;
         }
@@ -627,8 +700,30 @@
 
                 let koreanName = handNames[solved.name] || solved.name;
                 document.getElementById('res-hand').innerText = koreanName;
-                document.getElementById('res-winrate').innerText = "완성!";
+                document.getElementById('res-winrate').innerText = "족보 완성!";
+                
+                let cardValsDesc = solved.cards.map(c => c.value.replace('T', '10')).join(', ');
+                document.getElementById('res-kicker').innerText = `✨ 핵심 카드 순위: [ ${cardValsDesc} ] 승리!`;
+
                 highlightRanking(solved.name);
+
+                const highlightDOMCards = () => {
+                    const checkAndGlow = (containerId, sourceArray) => {
+                        const slots = document.getElementById(containerId).children;
+                        for(let i=0; i<sourceArray.length; i++) {
+                            let card = sourceArray[i];
+                            if(!card) continue;
+                            let isWinning = solved.cards.some(sc => sc.value === card.rank && suitLetters[card.suit] === sc.suit);
+                            if(isWinning) {
+                                slots[i].classList.add('winning-card');
+                            }
+                        }
+                    };
+                    checkAndGlow('board-cards', board);
+                    checkAndGlow('hole-cards', hole);
+                };
+
+                highlightDOMCards();
                 return;
             } catch (e) {
                 console.error(e);
@@ -648,6 +743,7 @@
 
         document.getElementById('res-hand').innerText = currentHandName;
         document.getElementById('res-winrate').innerText = `${totalCards.length}/7 장`;
+        document.getElementById('res-kicker').innerText = `동일 족보 시 하이카드(알파벳/숫자) 순위 판정`;
     }
 </script>
 </body>
