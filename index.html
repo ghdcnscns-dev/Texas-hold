@@ -82,7 +82,7 @@
             margin-bottom: 8px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.5);
         }
-        .win-rate { font-size: 1.2rem; font-weight: 800; color: var(--neon-gold); text-shadow: 0 0 8px var(--neon-gold-glow); }
+        .win-rate { font-size: 1.1rem; font-weight: 800; color: var(--neon-gold); text-shadow: 0 0 8px var(--neon-gold-glow); }
         .res-hand-text { margin-top: 2px; font-size: 0.8rem; color: #f8fafc; font-weight: 600; }
         .res-kicker-text { margin-top: 2px; font-size: 0.65rem; color: #34d399; font-family: 'Share Tech Mono', monospace; }
 
@@ -256,10 +256,9 @@
         .card-slot.filled.hearts, .card-slot.filled.diams { color: #dc2626; }
         .card-slot.filled.spades, .card-slot.filled.clubs { color: #0f172a; }
 
-        /* 족보 완성 카드 네온 불빛 강조 효과 */
         .card-slot.filled.winning-card {
             border: 3px solid var(--neon-gold) !important;
-            box-shadow: 0 0 16px var(--neon-gold), inset 0 0 8px var(--neon-gold-glow) !important;
+            box-shadow: 0 0 18px var(--neon-gold), inset 0 0 8px var(--neon-gold-glow) !important;
             transform: scale(1.08);
             z-index: 10;
         }
@@ -355,7 +354,7 @@
 
         <div class="rank-power-bar">
             <div class="power-bar-title">
-                <span>⚡ 최고 카드 순위 (1개만 점등)</span>
+                <span>⚡ 족보 핵심 최고 카드 (1개만 점등)</span>
                 <span style="color:#34d399;">(좌: 약함 ➔ 우: 강함)</span>
             </div>
             <div class="power-cards-container" id="powerCardsContainer">
@@ -638,7 +637,6 @@
         document.querySelectorAll('.power-mini-badge').forEach(el => el.classList.remove('active'));
     }
 
-    // 스트레이트 플러시 감지 함수
     function findBestStraightFlush(totalCards) {
         let suitsMap = {};
         totalCards.forEach(c => {
@@ -651,7 +649,7 @@
             if (sCards.length >= 5) {
                 let straightFromSuit = findBestStraight(sCards);
                 if (straightFromSuit) {
-                    let isRoyal = straightFromSuit.some(c => c.rank === 'A') && straightFromSuit.some(c => c.rank === 'T');
+                    let isRoyal = straightFromSuit.some(c => c.rank === 'A') && straightFromSuit.some(c => c.rank === 'K');
                     return {
                         name: isRoyal ? 'Royal Flush' : 'Straight Flush',
                         descr: isRoyal ? '로열 플러시 완성' : '스트레이트 플러시 완성',
@@ -663,7 +661,6 @@
         return null;
     }
 
-    // 일반 스트레이트 감지 함수
     function findBestStraight(totalCards) {
         let uniqueWeights = [...new Set(totalCards.map(c => rankWeight[c.rank]))].sort((a, b) => b - a);
         if (uniqueWeights.includes(14)) {
@@ -723,16 +720,6 @@
         const activeBoard = board.filter(c => c !== null);
         const totalCards = [...activeHole, ...activeBoard];
 
-        const resetSlotStyles = (containerId) => {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            for(let slot of container.children) {
-                slot.classList.remove('winning-card');
-            }
-        };
-        resetSlotStyles('board-cards');
-        resetSlotStyles('hole-cards');
-
         for(let i=0; i<5; i++) {
             let slot = document.getElementById('board-cards').children[i];
             let c = board[i];
@@ -777,9 +764,7 @@
                 return;
             }
 
-            // 1순위: 스트레이트 플러시(또는 로열 플러시) 수동 체크
             let straightFlushResult = totalCards.length >= 5 ? findBestStraightFlush(totalCards) : null;
-            // 2순위: 일반 스트레이트 수동 체크
             let straightCards = totalCards.length >= 5 ? findBestStraight(totalCards) : null;
 
             if (straightFlushResult) {
@@ -825,15 +810,14 @@
             document.getElementById('res-hand').innerText = `현재 족보: ${koreanName} ${solvedHand.descr ? '('+solvedHand.descr+')' : ''}`;
             document.getElementById('res-winrate').innerText = `✦ 실시간 분석 ✦`;
 
-            let valuesToCompare = [];
             let winningCardsDesc = [];
 
             if (solvedHand.cards && solvedHand.cards.length > 0) {
                 winningCardsDesc = solvedHand.cards.map(c => c.value + suits[Object.keys(suitLetters).find(k => suitLetters[k] === c.suit)]);
-                valuesToCompare = solvedHand.cards.map(c => c.value);
                 document.getElementById('res-kicker').innerText = `💡 족보 완성 카드: ${winningCardsDesc.join(', ')}`;
 
                 let winningSuits = solvedHand.cards.map(c => c.suit);
+                let valuesToCompare = solvedHand.cards.map(c => c.value);
                 let cloneValues = [...valuesToCompare];
                 let cloneSuits = [...winningSuits];
 
@@ -860,13 +844,17 @@
                 checkAndMark('hole-cards', hole);
 
             } else {
-                valuesToCompare = totalCards.map(c => c.rank);
-                document.getElementById('res-kicker').innerText = `💡 입력 카드 수: ${totalCards.length}장 (5장 이상 시 정밀 분석)`;
+                document.getElementById('res-kicker').innerText = `💡 입력 카드 수: ${totalCards.length}장 (조합 진행 중)`;
             }
 
-            let highestRank = valuesToCompare.reduce((max, curr) => {
-                return (rankWeight[curr] > rankWeight[max]) ? curr : max;
-            }, valuesToCompare[0]);
+            // 요청하신 대로 족보에 기여하는 '핵심 카드들' 중에서만 가장 높은 카드를 찾아 2~A 칸에 불이 들어오게 하고, 족보와 무관한 카드는 체크 대상에서 완전히 제외했습니다.
+            let highestRank = null;
+            if (solvedHand.cards && solvedHand.cards.length > 0) {
+                let handCardValues = solvedHand.cards.map(c => c.value);
+                highestRank = handCardValues.reduce((max, curr) => {
+                    return (rankWeight[curr] > rankWeight[max]) ? curr : max;
+                }, handCardValues[0]);
+            }
 
             highlightRanking(englishKey);
             highlightPowerBar(highestRank);
